@@ -6,6 +6,8 @@ OLD_PS1=$PS1
 OLD_NODE_PATH=$NODE_PATH
 PATH=$(pwd)/node_modules/.bin:$(pwd)/bin:$PATH
 
+export NODE_PATH=$(pwd)/code${NODE_PATH+:}${NODE_PATH}
+
 thisdir=$(basename "$(pwd)")
 first2=$(printf '%.2s' "$thisdir")
 
