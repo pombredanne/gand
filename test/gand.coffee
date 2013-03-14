@@ -50,7 +50,7 @@ describe 'gand', ->
       context "when the path doesn't exist", ->
         before (done) ->
           postQuota
-            path: '/flooplegarple'
+            path: 'flooplegarpledoesnotexist'
             size: 500 #MB
           , this, done
 
@@ -60,7 +60,7 @@ describe 'gand', ->
       context "when the size is invalid", ->
         before (done) ->
           postQuota
-            path: '/tes/testington'
+            path: 'tes/testington'
             size: 'hairyporkscratching'
           , this, done
 
