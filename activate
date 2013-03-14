@@ -1,0 +1,22 @@
+#!/bin/sh
+# run me with . activate
+
+OLD_PATH=$PATH
+OLD_PS1=$PS1
+OLD_NODE_PATH=$NODE_PATH
+PATH=$(pwd)/node_modules/.bin:$(pwd)/bin:$PATH
+
+thisdir=$(basename "$(pwd)")
+first2=$(printf '%.2s' "$thisdir")
+
+PS1="[$first2]$PS1"
+deactivate () {
+    PATH=$OLD_PATH
+    PS1=$OLD_PS1
+    NODE_PATH=$OLD_NODE_PATH
+}
+
+s=../swops-secret/keys.sh
+test -e "$s" && . "$s" && echo yummm, keys.sh
+
+true
