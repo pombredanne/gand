@@ -2,7 +2,7 @@
   "name": "gand",
   "version": "0.0.0",
   "description": "Manages GlusterFS quotas for ScraperWiki X",
-  "main": "index.js",
+  "main": "code/gand.coffee",
   "directories": {
     "test": "test"
   },
@@ -19,12 +19,12 @@
   "devDependencies": {
     "mocha": "~1.8.2",
     "should": "~1.2.2",
-    "express": "~3.1.0",
     "request": "~2.16.2",
     "sinon": "~1.6.0"
   },
   "dependencies": {
     "coffee-script": "~1.6.1",
+    "express": "~3.1.0",
     "ident-express": "0.0.3"
   }
 }
