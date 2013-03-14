@@ -18,6 +18,8 @@ deactivate () {
     NODE_PATH=$OLD_NODE_PATH
 }
 
+mkdir -p tmp/tes/testington
+
 s=../swops-secret/keys.sh
 test -e "$s" && . "$s" && echo yummm, keys.sh
 
