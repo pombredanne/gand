@@ -41,7 +41,7 @@ validatePathExists = (req, res, next) ->
       return res.send 404
 
 app.post '/quota/?', validatePathAndSize, validatePathExists, (req, res) ->
-  cmd = "gluster volume quota #{process.env.GA_VOLUME} limit-usage #{process.env.GA_PATH}/#{req.body.path} #{req.body.size}MB"
+  cmd = "gluster volume quota #{process.env.GA_VOLUME} limit-usage /#{req.body.path} #{req.body.size}MB"
   
   child_process.exec cmd, (err, stdout, stderr) ->
     if err?
