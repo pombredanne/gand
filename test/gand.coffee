@@ -9,17 +9,17 @@ serv = require 'gand'
 BASE_URL = 'http://localhost:3002'
 
 describe 'gand', ->
-  # Could bind to an internal IP, use ident
-  context 'when gand receives a request from an allowed IP and ident', ->
-    context 'POST /quota', ->
-      postQuota = (form, that, done) ->
-        request.post
-          uri: "#{BASE_URL}/quota"
-          form: form
-        , (err, res, body) ->
-          [that.err, that.res, that.body] = arguments
-          done()
+  postQuota = (form, that, done) ->
+    request.post
+      uri: "#{BASE_URL}/quota"
+      form: form
+    , (err, res, body) ->
+      [that.err, that.res, that.body] = arguments
+      done()
 
+  context 'when gand receives a request from an allowed IP and ident', ->
+    serv.ALLOWED_IPS = ['127.0.0.1']
+    context 'POST /quota', ->
       before ->
         # TODO: this should use spawn, it's nicer
         @glusterStub = sinon.stub(child_process, 'exec').callsArg(1)
@@ -72,15 +72,21 @@ describe 'gand', ->
         it 'errors', ->
           @res.should.have.status 400
 
-    context 'PUT /quota/<path>', ->
-      it 'should modify a quota for the specified path'
-
     # TODO: implement when needed
     context 'DELETE /quota/<path>', ->
       it 'should delete a quota for the specified path'
 
   context 'when gand receives a request from a disallowed IP', ->
-    it 'returns an unauthorised error'
+    before (done) ->
+      serv.ALLOWED_IPS = []
+      postQuota
+        path: 'tes/testington'
+        size: '500'
+      , this, done
+
+    it 'returns an unauthorised error', ->
+      serv.ALLOWED_IPS = JSON.parse process.env.GA_ALLOWED_IPS
+      @res.should.have.status 403
 
   context "when gand receives a request from an allowed IP, but ident isn't root", ->
     it 'returns an unauthorised error'

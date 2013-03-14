@@ -4,6 +4,10 @@ child_process = require 'child_process'
 express = require 'express'
 checkIdent = require 'ident-express'
 
+allowedIPsPath = '/etc/gand-allowed-ips.json'
+if fs.existsSync allowedIPsPath
+  allowed_ips = require allowedIPsPath
+
 app = express()
 app.configure ->
   app.use express.bodyParser()
@@ -18,7 +22,8 @@ app.configure 'production', ->
 
 
 # Define Port
-port = process.env.GA_PORT or 3002
+PORT = process.env.GA_PORT or 3002
+exports.ALLOWED_IPS = allowed_ips
 
 validatePath = (req, res, next) ->
   unless /^[a-z0-9_.-]+[/]?[a-z0-9_.-]+$/i.test req.body.path
@@ -40,14 +45,20 @@ validatePathExists = (req, res, next) ->
     else
       return res.send 404
 
+app.all '*', (req, res, next) ->
+  if req.ip in exports.ALLOWED_IPS
+    next()
+  else
+    return res.send 403
+
 app.post '/quota/?', validatePathAndSize, validatePathExists, (req, res) ->
   cmd = "gluster volume quota #{process.env.GA_VOLUME} limit-usage /#{req.body.path} #{req.body.size}MB"
-  
+
   child_process.exec cmd, (err, stdout, stderr) ->
     if err?
       msg = "Got error setting quota:"
       console.warn "#{msg} (#{err}) #{stdout} #{stderr}"
-      return res.send 500, 
+      return res.send 500,
         error: msg
         statusCode: err.code
         stdout: stdout
@@ -55,5 +66,5 @@ app.post '/quota/?', validatePathAndSize, validatePathExists, (req, res) ->
     res.send 200
 
 # Start Server
-app.listen port, ->
+app.listen PORT, ->
   console.log "Listening on #{port}\nPress CTRL-C to stop server."
