@@ -25,14 +25,19 @@ describe 'gand', ->
         @glusterStub = sinon.stub(child_process, 'exec').callsArg(1)
 
       context 'when the request is valid', ->
+        path = 'tes/testington'
+        size = 500 # MB
         before (done) ->
           postQuota
-            path: 'tes/testington'
-            size: 500 #MB
+            path: path
+            size: size
           , this, done
 
         it 'should add a quota for the specified path', ->
           @glusterStub.calledOnce.should.be.true
+          quotaCalled = @glusterStub.calledWithMatch sinon.match RegExp(
+            "gluster volume quota.*limit-usage.*#{path}.*#{size}MB")
+          quotaCalled.should.be.true
 
         it 'returns success', ->
           @res.should.have.status 200

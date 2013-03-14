@@ -41,7 +41,18 @@ validatePathExists = (req, res, next) ->
       return res.send 404
 
 app.post '/quota/?', validatePathAndSize, validatePathExists, (req, res) ->
-  res.send 456
+  cmd = "gluster volume quota #{process.env.GA_VOLUME} limit-usage #{process.env.GA_PATH}/#{req.body.path} #{req.body.size}MB"
+  
+  child_process.exec cmd, (err, stdout, stderr) ->
+    if err?
+      msg = "Got error setting quota:"
+      console.warn "#{msg} (#{err}) #{stdout} #{stderr}"
+      return res.send 500, 
+        error: msg
+        statusCode: err.code
+        stdout: stdout
+        stderr: stderr
+    res.send 200
 
 # Start Server
 app.listen port, ->
