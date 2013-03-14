@@ -1,0 +1,28 @@
+{
+  "name": "gand",
+  "version": "0.0.0",
+  "description": "Manages GlusterFS quotas for ScraperWiki X",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/scraperwiki/gand.git"
+  },
+  "author": "ScraperWiki Limited",
+  "license": "BSD",
+  "gitHead": "9225a1ba1f765560437b67b84c7ced07901bc4da",
+  "devDependencies": {
+    "mocha": "~1.8.2",
+    "should": "~1.2.2",
+    "express": "~3.1.0"
+  },
+  "dependencies": {
+    "coffee-script": "~1.6.1",
+    "ident-express": "0.0.3"
+  }
+}
