@@ -67,4 +67,4 @@ app.post '/quota/?', validatePathAndSize, validatePathExists, (req, res) ->
 
 # Start Server
 app.listen PORT, ->
-  console.log "Listening on #{port}\nPress CTRL-C to stop server."
+  console.log "Listening on #{PORT}\nPress CTRL-C to stop server."
