@@ -85,7 +85,7 @@ describe 'gand', ->
       , this, done
 
     it 'returns an unauthorised error', ->
-      serv.ALLOWED_IPS = JSON.parse process.env.GA_ALLOWED_IPS
+      serv.ALLOWED_IPS = ['127.0.0.1']
       @res.should.have.status 403
 
   context "when gand receives a request from an allowed IP, but ident isn't root", ->
