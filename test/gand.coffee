@@ -72,10 +72,6 @@ describe 'gand', ->
         it 'errors', ->
           @res.should.have.status 400
 
-    # TODO: implement when needed
-    context 'DELETE /quota/<path>', ->
-      it 'should delete a quota for the specified path'
-
   context 'when gand receives a request from a disallowed IP', ->
     before (done) ->
       serv.ALLOWED_IPS = []
