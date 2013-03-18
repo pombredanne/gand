@@ -45,13 +45,18 @@ validatePathExists = (req, res, next) ->
     else
       return res.send 404
 
+validateIdent = (req, res, next) ->
+  if req.ident != "root"
+    return res.send 403
+  next()
+
 app.all '*', (req, res, next) ->
   if req.ip in exports.ALLOWED_IPS
     next()
   else
     return res.send 403
 
-app.post '/quota/?', validatePathAndSize, validatePathExists, (req, res) ->
+app.post '/quota/?', checkIdent, validateIdent, validatePathAndSize, validatePathExists, (req, res) ->
   cmd = "gluster volume quota #{process.env.GA_VOLUME} limit-usage /#{req.body.path} #{req.body.size}MB"
 
   child_process.exec cmd, (err, stdout, stderr) ->

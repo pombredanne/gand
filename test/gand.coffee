@@ -4,21 +4,24 @@ should = require 'should'
 request = require 'request'
 sinon = require 'sinon'
 
-serv = require 'gand'
-
 # https://github.com/scraperwiki/ident-express
 # So that it appears in require.cache which we stub.
 require 'ident-express'
 
+fake_ident = 'root'
+checkIdentFake = (req, res, next) ->
+  req.ident = fake_ident
+  next()
+
+# ident-express doesn't return a module, but a function
+# so we have to mock it via require's cache
+@checkIdentStub = sinon.stub require.cache[require.resolve 'ident-express'],
+  'exports',
+  checkIdentFake
+
+serv = require 'gand'
+
 BASE_URL = 'http://localhost:3002'
-
-checkIdentFakeRoot = (req, res, next) ->
-  req.ident = 'root'
-  next()
-
-checkIdentFakeNotRoot = (req, res, next) ->
-  req.ident = 'stilton'
-  next()
 
 describe 'gand', ->
   postQuota = (form, that, done) ->
@@ -28,13 +31,6 @@ describe 'gand', ->
     , (err, res, body) ->
       [that.err, that.res, that.body] = arguments
       done()
-
-  # ident-express doesn't return a module, but a function
-  # so we have to mock it via require's cache
-  before ->
-    @checkIdentStub = sinon.stub require.cache[require.resolve 'ident-express'],
-      'exports',
-      checkIdentFakeRoot
 
   context 'when gand receives a request from an allowed IP and ident', ->
     serv.ALLOWED_IPS = ['127.0.0.1']
@@ -105,10 +101,7 @@ describe 'gand', ->
 
   context "when gand receives a request from an allowed IP, but ident isn't root", ->
     before ->
-      require.cache[require.resolve 'ident-express'].exports.restore()
-      @checkIdentStub = sinon.stub require.cache[require.resolve 'ident-express'],
-        'exports',
-        checkIdentFakeNotRoot
+      fake_ident = 'stilton'
 
     before (done) ->
       serv.ALLOWED_IPS = ['127.0.0.1']
@@ -121,10 +114,7 @@ describe 'gand', ->
       @res.should.have.status 403
 
     after ->
-      require.cache[require.resolve 'ident-express'].exports.restore()
-      @checkIdentStub = sinon.stub require.cache[require.resolve 'ident-express'],
-        'exports',
-        checkIdentFakeRoot
+      fake_ident = 'root'
 
 
 
